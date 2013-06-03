@@ -61,6 +61,7 @@ class PaypointTest extends \PHPUnit_Framework_TestCase
     /**
      * Test that updateCompleteFrom makes the approprate modifactions to the form.
      *
+     * @covers SclZfCartPaypoint\Paypoint::__construct
      * @covers SclZfCartPaypoint\Paypoint::updateCompleteForm
      * @covers SclZfCartPaypoint\Paypoint::addHiddenField
      *
@@ -119,5 +120,17 @@ class PaypointTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($amount, $form->get('amount')->getValue());
         $this->assertEquals($callback, $form->get('callback')->getValue());
         $this->assertEquals($digest, $form->get('digest')->getValue());
+    }
+
+    /**
+     * Test the complete method.
+     *
+     * @covers SclZfCartPaypoint\Paypoint::complete
+     *
+     * @return void
+     */
+    public function testComplete()
+    {
+        $this->paypoint->complete(array());
     }
 }

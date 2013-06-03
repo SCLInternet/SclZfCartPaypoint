@@ -112,6 +112,34 @@ class PaypointOptionsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Check that when setLiveConnection is call with something that is not an
+     * array or instance of ConnectionOptions that an exception is thrown.
+     *
+     * @covers SclZfCartPaypoint\Options\PaypointOptions::setLiveConnection
+     * @expectedException SclZfCartPaypoint\Exception\InvalidArgumentException
+     *
+     * @return void
+     */
+    public function testSetLiveConnectionWithBadValue()
+    {
+        $this->options->setLiveConnection(7);
+    }
+
+    /**
+     * Check that when setTestConnection is call with something that is not an
+     * array or instance of ConnectionOptions that an exception is thrown.
+     *
+     * @covers SclZfCartPaypoint\Options\PaypointOptions::setTestConnection
+     * @expectedException SclZfCartPaypoint\Exception\InvalidArgumentException
+     *
+     * @return void
+     */
+    public function testSetTestConnectionWithBadValue()
+    {
+        $this->options->setTestConnection(7);
+    }
+
+    /**
      * testGetConnection
      *
      * @covers SclZfCartPaypoint\Options\PaypointOptions::getConnectionOptions
