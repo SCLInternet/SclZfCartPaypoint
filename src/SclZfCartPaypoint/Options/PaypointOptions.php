@@ -2,6 +2,7 @@
 
 namespace SclZfCartPaypoint\Options;
 
+use SclZfCartPaypoint\Exception\InvalidArgumentException;
 use Zend\Stdlib\AbstractOptions;
 
 /**
@@ -222,8 +223,7 @@ class PaypointOptions extends AbstractOptions
         }
 
         if (!$liveConnection instanceof ConnectionOptions) {
-            // @todo Throw a proper exception
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 '$liveConnection must be an instance of ConnectionOptions'
             );
         }
@@ -256,8 +256,7 @@ class PaypointOptions extends AbstractOptions
         }
 
         if (!$testConnection instanceof ConnectionOptions) {
-            // @todo Throw a proper exception
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 '$testConnection must be an instance of ConnectionOptions'
             );
         }
