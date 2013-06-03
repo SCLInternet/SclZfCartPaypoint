@@ -35,26 +35,34 @@ class ConnectionOptionsTest extends \PHPUnit_Framework_TestCase
      * @covers SclZfCartPaypoint\Options\ConnectionOptions::setUrl
      * @covers SclZfCartPaypoint\Options\ConnectionOptions::getPassword
      * @covers SclZfCartPaypoint\Options\ConnectionOptions::setPassword
+     * @dataProvider getSetProvider
      *
      * @return void
      */
-    public function testGetSet()
+    public function testGetSet($param, $value)
     {
-        $url = 'http://some.url';
-        $password = 'secret';
+        $getter = 'get' . $param;
+        $setter = 'set' . $param;
 
-        $this->options->setUrl($url);
+        $this->options->$setter($value);
+
         $this->assertEquals(
-            $url,
-            $this->options->getUrl(),
-            'URL is incorrect.'
+            $value,
+            $this->options->$getter(),
+            'Value for $' . $param . 'was incorrect.'
         );
+    }
 
-        $this->options->setPassword($password);
-        $this->assertEquals(
-            $password,
-            $this->options->getPassword(),
-            'password is incorrect.'
+    /**
+     * Provides values to test getters and setters
+     *
+     * @return array
+     */
+    public function getSetProvider()
+    {
+        return array(
+            array('url', 'http://some.url'),
+            array('password', 'secret'),
         );
     }
 }

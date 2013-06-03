@@ -77,7 +77,6 @@ class PaypointOptionsTest extends \PHPUnit_Framework_TestCase
         $this->getSetCheck('testConnection', $this->getMock('SclZfCartPaypoint\Options\ConnectionOptions'));
     }
 
-
     /**
      * Test the set*Connection method when passed an array.
      *
