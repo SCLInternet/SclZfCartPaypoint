@@ -12,25 +12,18 @@ return array(
     'router' => array(
         'routes' => array(
             'paypoint' => array(
-                'type' => 'Literal',
+                'type'    => 'Literal',
                 'options' => array(
                     'route' => '/paypoint'
-                        'options' => array(
-                            'route' => '/callback',
-                            'defaults' => array(
-                                'action' => 'callback',
-                                'controller' => __NAMESPACE__ . '\Controller\Payment',
-                            ),
-                        ),
                 ),
-                'may_terminate' => true,
-                'child_routes' => array(
+                'may_terminate' => false,
+                'child_routes'  => array(
                     'callback' => array(
-                        'type' => 'Literal',
+                        'type'    => 'Literal',
                         'options' => array(
-                            'route' => '/callback',
+                            'route'    => '/callback',
                             'defaults' => array(
-                                'action' => 'callback',
+                                'action'     => 'callback',
                                 'controller' => __NAMESPACE__ . '\Controller\Payment',
                             ),
                         ),

@@ -12,13 +12,25 @@ use Zend\Mvc\Controller\AbstractActionController;
 class PaymentController extends AbstractActionController
 {
     /**
+     * paypointService
+     *
+     * @var PaypointService
+     */
+    protected $paypointService;
+
+    /**
      * Process the payment callback.
      *
-     * @return void
+     * @return Zend\Http\Response
      */
     public function callbackAction()
     {
-        echo "STUFF";
-//        return $this->getResponse();
+        $request = $this->getRequest();
+
+        $query = $request->getQuery();
+
+//        $this->paypointService->processCallback($query);
+
+        return $this->getResponse();
     }
 }
