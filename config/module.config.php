@@ -5,7 +5,7 @@ namespace SclZfCartPaypoint;
 return array(
     'controllers' => array(
         'invokables' => array(
-            __NAMESPACE__ . '\Controller\Payment' => __NAMESPACE__ . '\Controller\PaymentController',
+            'SclZfCartPaypoint\Controller\Payment' => 'SclZfCartPaypoint\Controller\PaymentController',
         ),
     ),
 

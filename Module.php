@@ -20,6 +20,8 @@ class Module implements
 {
     /**
      * {@inheritDoc}
+     *
+     * @return array
      */
     public function getAutoloaderConfig()
     {
@@ -34,6 +36,8 @@ class Module implements
 
     /**
      * {@inheritDoc}
+     *
+     * @return array
      */
     public function getConfig()
     {
@@ -42,20 +46,17 @@ class Module implements
 
     /**
      * {@inheritDoc}
+     *
+     * @return array
      */
     public function getServiceConfig()
     {
         return array(
-            /*
-            'invokables' => array(
-                'SclZfCartSagepay\Data\CryptData' => 'SclZfCartSagepay\Data\CryptData',
-            ),
             'factories' => array(
-                'SclZfCartSagepay\BlockCipher' => 'SclZfCartSagepay\Service\BlockCipherFactory',
-                'SclZfCartSagepay\Sagepay'     => 'SclZfCartSagepay\Service\SagepayFactory',
-                'SclZfCartSagepay\Data\Config' => 'SclZfCartSagepay\Service\ConfigFactory',
+                'SclZfCartPaypoint\Service\PaypointService' => function ($sm) {
+                    return new \SclZfCartPaypoint\Service\PaypointService();
+                },
             ),
-            */
         );
     }
 }
