@@ -5,6 +5,7 @@ namespace SclZfCartPaypoint;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use Zend\ModuleManager\Feature\ControllerProviderInterface;
 use Zend\ModuleManager\Feature\ServiceProviderInterface;
 
 /**
@@ -16,10 +17,13 @@ use Zend\ModuleManager\Feature\ServiceProviderInterface;
 class Module implements
     AutoloaderProviderInterface,
     ConfigProviderInterface,
+    ControllerProviderInterface,
     ServiceProviderInterface
 {
     /**
      * {@inheritDoc}
+     *
+     * @return array
      */
     public function getAutoloaderConfig()
     {
@@ -34,6 +38,8 @@ class Module implements
 
     /**
      * {@inheritDoc}
+     *
+     * @return array
      */
     public function getConfig()
     {
@@ -42,20 +48,36 @@ class Module implements
 
     /**
      * {@inheritDoc}
+     *
+     * @return array
+     */
+    public function getControllerConfig()
+    {
+        return array(
+            'factories' => array(
+                'SclZfCartPaypoint\Controller\Payment' => function ($cm) {
+                    $sm = $cm->getServiceLocator();
+
+                    return new \SclZfCartPaypoint\Controller\PaymentController(
+                        $sm->get('SclZfCartPaypoint\Service\PaypointService')
+                    );
+                },
+            ),
+        );
+    }
+    /**
+     * {@inheritDoc}
+     *
+     * @return array
      */
     public function getServiceConfig()
     {
         return array(
-            /*
-            'invokables' => array(
-                'SclZfCartSagepay\Data\CryptData' => 'SclZfCartSagepay\Data\CryptData',
-            ),
             'factories' => array(
-                'SclZfCartSagepay\BlockCipher' => 'SclZfCartSagepay\Service\BlockCipherFactory',
-                'SclZfCartSagepay\Sagepay'     => 'SclZfCartSagepay\Service\SagepayFactory',
-                'SclZfCartSagepay\Data\Config' => 'SclZfCartSagepay\Service\ConfigFactory',
+                'SclZfCartPaypoint\Service\PaypointService' => function ($sm) {
+                    return new \SclZfCartPaypoint\Service\PaypointService();
+                },
             ),
-            */
         );
     }
 }
