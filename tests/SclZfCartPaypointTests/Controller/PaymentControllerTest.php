@@ -35,6 +35,17 @@ class PaymentControllerTests extends AbstractHttpControllerTestCase
      */
     public function testCallbackAction()
     {
+        $service = $this->getMockBuilder('SclZfCartPaypoint\Service\PaypointService')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $service->expects($this->once())
+                ->method('processCallback');
+
+        $serviceLocator = $this->getApplicationServiceLocator();
+        $serviceLocator->setAllowOverride(true);
+        $serviceLocator->setService('SclZfCartPaypoint\Service\PaypointService', $service);
+
         $result = $this->dispatch('/paypoint/callback');
 
         $this->assertControllerName('SclZfCartPaypoint\Controller\Payment');
