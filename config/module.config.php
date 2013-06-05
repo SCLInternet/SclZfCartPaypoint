@@ -3,12 +3,6 @@
 namespace SclZfCartPaypoint;
 
 return array(
-    'controllers' => array(
-        'invokables' => array(
-            'SclZfCartPaypoint\Controller\Payment' => 'SclZfCartPaypoint\Controller\PaymentController',
-        ),
-    ),
-
     'router' => array(
         'routes' => array(
             'paypoint' => array(

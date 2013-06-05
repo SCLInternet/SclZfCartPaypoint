@@ -5,6 +5,7 @@ namespace SclZfCartPaypoint;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use Zend\ModuleManager\Feature\ControllerProviderInterface;
 use Zend\ModuleManager\Feature\ServiceProviderInterface;
 
 /**
@@ -16,6 +17,7 @@ use Zend\ModuleManager\Feature\ServiceProviderInterface;
 class Module implements
     AutoloaderProviderInterface,
     ConfigProviderInterface,
+    ControllerProviderInterface,
     ServiceProviderInterface
 {
     /**
@@ -44,6 +46,25 @@ class Module implements
         return include __DIR__ . '/config/module.config.php';
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return array
+     */
+    public function getControllerConfig()
+    {
+        return array(
+            'factories' => array(
+                'SclZfCartPaypoint\Controller\Payment' => function ($cm) {
+                    $sm = $cm->getServiceLocator();
+
+                    return new \SclZfCartPaypoint\Controller\PaymentController(
+                        $sm->get('SclZfCartPaypoint\Service\PaypointService')
+                    );
+                },
+            ),
+        );
+    }
     /**
      * {@inheritDoc}
      *

@@ -20,6 +20,16 @@ class PaymentController extends AbstractActionController
     protected $paypointService;
 
     /**
+     * __construct
+     *
+     * @param PaypointService $paypointService
+     */
+    public function __construct(PaypointService $paypointService)
+    {
+        $this->paypointService = $paypointService;
+    }
+
+    /**
      * Process the payment callback.
      *
      * @return Zend\Http\Response
@@ -30,38 +40,8 @@ class PaymentController extends AbstractActionController
 
         $query = $request->getQuery();
 
-        $this->getPaypointService()->processCallback($query);
+        $this->paypointService->processCallback($query);
 
         return $this->getResponse();
-    }
-
-    /**
-     * getPaypointService
-     *
-     * @return PaypointService
-     * @todo   Inject rather than rely on service locator
-     */
-    public function getPaypointService()
-    {
-        if (null === $this->paypointService) {
-            $this->setPaypointService(
-                $this->getServiceLocator()->get('SclZfCartPaypoint\Service\PaypointService')
-            );
-        }
-
-        return $this->paypointService;
-    }
-
-    /**
-     * setPaypointService
-     *
-     * @param  PaypointService $paypointService
-     * @return self
-     */
-    public function setPaypointService(PaypointService $paypointService)
-    {
-        $this->paypointService = $paypointService;
-
-        return $this;
     }
 }

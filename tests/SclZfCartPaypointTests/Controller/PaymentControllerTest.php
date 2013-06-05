@@ -28,8 +28,6 @@ class PaymentControllerTests extends AbstractHttpControllerTestCase
      * Test the callback action.
      *
      * @covers SclZfCartPaypoint\Controller\PaymentController::callbackAction
-     * @covers SclZfCartPaypoint\Controller\PaymentController::setPaypointService
-     * @covers SclZfCartPaypoint\Controller\PaymentController::getPaypointService
      *
      * @return void
      */
