@@ -88,8 +88,6 @@ class CV2AVSResponseTest extends \PHPUnit_Framework_TestCase
      * Test values for an ALL MATCH response.
      *
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::set
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::setMatchedValues
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::reset
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::checked
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::allMatch
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::codeMatch
@@ -109,8 +107,6 @@ class CV2AVSResponseTest extends \PHPUnit_Framework_TestCase
      * Test values for an SECURITY CODE MATCH ONLY response.
      *
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::set
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::setMatchedValues
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::reset
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::checked
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::allMatch
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::codeMatch
@@ -130,8 +126,6 @@ class CV2AVSResponseTest extends \PHPUnit_Framework_TestCase
      * Test values for an ADDRESS MATCH ONLY response.
      *
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::set
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::setMatchedValues
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::reset
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::checked
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::allMatch
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::codeMatch
@@ -151,8 +145,6 @@ class CV2AVSResponseTest extends \PHPUnit_Framework_TestCase
      * Test values for an NO DATA MATCHES response.
      *
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::set
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::setMatchedValues
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::reset
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::checked
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::allMatch
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::codeMatch
@@ -172,8 +164,6 @@ class CV2AVSResponseTest extends \PHPUnit_Framework_TestCase
      * Test values for an DATA NOT CHECKED response.
      *
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::set
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::setMatchedValues
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::reset
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::checked
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::allMatch
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::codeMatch
@@ -193,8 +183,6 @@ class CV2AVSResponseTest extends \PHPUnit_Framework_TestCase
      * Test values for an PARTIAL ADDRESS MATCH / ADDRESS response.
      *
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::set
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::setMatchedValues
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::reset
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::checked
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::allMatch
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::codeMatch
@@ -214,8 +202,6 @@ class CV2AVSResponseTest extends \PHPUnit_Framework_TestCase
      * Test values for an PARTIAL ADDRESS MATCH / POSTCODE response.
      *
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::set
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::setMatchedValues
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::reset
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::checked
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::allMatch
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::codeMatch
@@ -235,8 +221,6 @@ class CV2AVSResponseTest extends \PHPUnit_Framework_TestCase
      * Test values for an SECURITY CODE MATCH / POSTCODE response.
      *
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::set
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::setMatchedValues
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::reset
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::checked
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::allMatch
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::codeMatch
@@ -256,8 +240,6 @@ class CV2AVSResponseTest extends \PHPUnit_Framework_TestCase
      * Test values for an SECURITY CODE MATCH / ADDRESS response.
      *
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::set
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::setMatchedValues
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::reset
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::checked
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::allMatch
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::codeMatch
@@ -278,8 +260,6 @@ class CV2AVSResponseTest extends \PHPUnit_Framework_TestCase
      *
      * @depends testSecurityNoPostcode
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::set
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::setMatchedValues
-     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::reset
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::checked
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::allMatch
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::codeMatch

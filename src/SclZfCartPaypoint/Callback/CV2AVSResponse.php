@@ -57,32 +57,11 @@ class CV2AVSResponse
     const SECURITY_NO_POSTCODE = 'SECURITY CODE MATCH / ADDRESS';
 
     /**
-     * Were the CV2AVS details checked.
+     * The status string.
      *
-     * @var bool
+     * @var string
      */
-    protected $checked = false;
-
-    /**
-     * Did the security code match.
-     *
-     * @var bool
-     */
-    protected $codeMatch = false;
-
-    /**
-     * Did the address match.
-     *
-     * @var bool
-     */
-    protected $addressMatch = false;
-
-    /**
-     * postcodeMatch
-     *
-     * @var bool
-     */
-    protected $postcodeMatch = false;
+    protected $status = self::NOT_CHECKED;
 
     /**
      * __construct
@@ -96,33 +75,22 @@ class CV2AVSResponse
         }
     }
 
-    /**
-     * Set all values to false.
-     *
-     * @return void
-     */
-    protected function reset()
+    protected function validStatus($status)
     {
-        $this->checked       = false;
-        $this->codeMatch     = false;
-        $this->addressMatch  = false;
-        $this->postcodeMatch = false;
-    }
-
-    /**
-     * Set the matched parameter values.
-     *
-     * @param  bool $code
-     * @param  bool $address
-     * @param  bool $postcode
-     *
-     * @return void
-     */
-    protected function setMatchedValues($code, $address, $postcode)
-    {
-        $this->codeMatch     = $code;
-        $this->addressMatch  = $address;
-        $this->postcodeMatch = $postcode;
+        return in_array(
+            $status,
+            array(
+                self::ALL_MATCH,
+                self::CV2_ONLY,
+                self::AVS_ONLY,
+                self::NO_MATCH,
+                self::NOT_CHECKED,
+                self::POSTCODE_NO_ADDRESS,
+                self::ADDRESS_NO_POSTCODE,
+                self::SECURITY_NO_ADDRESS,
+                self::SECURITY_NO_POSTCODE,
+            )
+        );
     }
 
     /**
@@ -130,57 +98,15 @@ class CV2AVSResponse
      *
      * @param  string $status
      * @return void
+     * @throws DomainException When invalid status is given
      */
     public function set($status)
     {
-        $this->reset();
-
-        if (self::NOT_CHECKED === $status) {
-            return;
+        if (!$this->validStatus($status)) {
+            throw new DomainException('Got unknown status "' . $status . '"');
         }
 
-        $this->checked = true;
-
-        if (self::NO_MATCH === $status) {
-            return;
-        }
-
-        if (self::ALL_MATCH === $status) {
-            $this->setMatchedValues(true, true, true);
-            return;
-        }
-
-        if (self::CV2_ONLY === $status) {
-            $this->setMatchedValues(true, false, false);
-            return;
-        }
-
-        if (self::AVS_ONLY === $status) {
-            $this->setMatchedValues(false, true, true);
-            return;
-        }
-
-        if (self::ADDRESS_NO_POSTCODE === $status) {
-            $this->setMatchedValues(false, true, false);
-            return;
-        }
-
-        if (self::POSTCODE_NO_ADDRESS === $status) {
-            $this->setMatchedValues(false, false, true);
-            return;
-        }
-
-        if (self::SECURITY_NO_ADDRESS === $status) {
-            $this->setMatchedValues(true, false, true);
-            return;
-        }
-
-        if (self::SECURITY_NO_POSTCODE === $status) {
-            $this->setMatchedValues(true, true, false);
-            return;
-        }
-
-        throw new DomainException('Got unknown status "' . $status . '"');
+        $this->status = $status;
     }
 
     /**
@@ -190,7 +116,7 @@ class CV2AVSResponse
      */
     public function checked()
     {
-        return $this->checked;
+        return self::NOT_CHECKED !== $this->status;
     }
 
     /**
@@ -200,10 +126,7 @@ class CV2AVSResponse
      */
     public function allMatch()
     {
-        return $this->checked
-            && $this->codeMatch
-            && $this->addressMatch
-            && $this->postcodeMatch;
+        return self::ALL_MATCH  === $this->status;
     }
 
     /**
@@ -213,9 +136,8 @@ class CV2AVSResponse
      */
     public function noMatch()
     {
-        return !$this->codeMatch
-            && !$this->addressMatch
-            && !$this->postcodeMatch;
+        return self::NOT_CHECKED === $this->status
+            || self::NO_MATCH === $this->status;
     }
 
     /**
@@ -225,7 +147,10 @@ class CV2AVSResponse
      */
     public function codeMatch()
     {
-        return $this->codeMatch;
+        return self::ALL_MATCH  === $this->status
+            || self::CV2_ONLY  === $this->status
+            || self::SECURITY_NO_ADDRESS  === $this->status
+            || self::SECURITY_NO_POSTCODE === $this->status;
     }
 
     /**
@@ -235,7 +160,10 @@ class CV2AVSResponse
      */
     public function addressMatch()
     {
-        return $this->addressMatch;
+        return self::ALL_MATCH  === $this->status
+            || self::AVS_ONLY  === $this->status
+            || self::ADDRESS_NO_POSTCODE  === $this->status
+            || self::SECURITY_NO_POSTCODE === $this->status;
     }
 
     /**
@@ -245,6 +173,9 @@ class CV2AVSResponse
      */
     public function postcodeMatch()
     {
-        return $this->postcodeMatch;
+        return self::ALL_MATCH  === $this->status
+            || self::AVS_ONLY  === $this->status
+            || self::POSTCODE_NO_ADDRESS  === $this->status
+            || self::SECURITY_NO_ADDRESS === $this->status;
     }
 }
