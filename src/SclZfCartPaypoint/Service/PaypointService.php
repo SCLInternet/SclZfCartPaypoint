@@ -2,6 +2,8 @@
 
 namespace SclZfCartPaypoint\Service;
 
+use SclZfCartPaypoint\Data\Callback;
+
 /**
  * Perform actions need to make payments through paypoint.
  *
@@ -9,7 +11,7 @@ namespace SclZfCartPaypoint\Service;
  */
 class PaypointService
 {
-    public function processCallback($params)
+    public function processCallback(Callback $params)
     {
     }
 }

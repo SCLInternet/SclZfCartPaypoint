@@ -22,6 +22,8 @@ class PaypointServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcessCallback()
     {
-        $this->service->processCallback(array());
+        $callback = $this->getMock('SclZfCartPaypoint\Data\Callback');
+
+        $this->service->processCallback($callback);
     }
 }

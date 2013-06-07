@@ -3,6 +3,7 @@
 namespace SclZfCartPaypoint\Controller;
 
 use SclZfCartPaypoint\Service\PaypointService;
+use SclZfCartPaypoint\Callback\Callback;
 use Zend\Mvc\Controller\AbstractActionController;
 
 /**
@@ -40,7 +41,7 @@ class PaymentController extends AbstractActionController
 
         $query = $request->getQuery();
 
-        $this->paypointService->processCallback($query);
+        $this->paypointService->processCallback(new Callback($query->toArray()));
 
         return $this->getResponse();
     }
