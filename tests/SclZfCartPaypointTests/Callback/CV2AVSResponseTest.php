@@ -298,8 +298,8 @@ class CV2AVSResponseTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructWithValue()
     {
-        $this->cv2avs->set('ALL MATCH');
+        $cv2avs = new CV2AVSResponse('ALL MATCH');
 
-        $this->checkValues(true, true, true, true);
+        $this->assertTrue($cv2avs->allMatch());
     }
 }
