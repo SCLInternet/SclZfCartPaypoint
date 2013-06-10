@@ -3,6 +3,7 @@
 namespace SclZfCartPaypoint\Callback;
 
 use SclZfCartPaypoint\Exception\DomainException;
+
 /**
  * Packages up the callback data nicely.
  *
