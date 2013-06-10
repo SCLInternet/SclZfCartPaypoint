@@ -209,8 +209,8 @@ class CallbackTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function setSetCallbackValuesWithBadBoolString()
+    public function testSetCallbackValuesWithBadBoolString()
     {
-        $this->callback->getCallbackValues(array('test_status' => 'y'));
+        $this->callback->setCallbackValues(array('test_status' => 'y'));
     }
 }

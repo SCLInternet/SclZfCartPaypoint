@@ -279,6 +279,7 @@ class CV2AVSResponseTest extends \PHPUnit_Framework_TestCase
      * Make sure an exception is thrown when an invalid status is set.
      *
      * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::set
+     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::validStatus
      * @expectedException SclZfCartPaypoint\Exception\DomainException
      *
      * @return void
@@ -286,5 +287,19 @@ class CV2AVSResponseTest extends \PHPUnit_Framework_TestCase
     public function testInvalidStatus()
     {
         $this->cv2avs->set('xxx');
+    }
+
+    /**
+     * Test initializing the values via the constructor.
+     *
+     * @covers SclZfCartPaypoint\Callback\CV2AVSResponse::__construct
+     *
+     * @return void
+     */
+    public function testConstructWithValue()
+    {
+        $this->cv2avs->set('ALL MATCH');
+
+        $this->checkValues(true, true, true, true);
     }
 }
