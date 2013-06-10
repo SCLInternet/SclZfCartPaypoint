@@ -34,9 +34,7 @@ class PaymentControllerTests extends AbstractHttpControllerTestCase
      */
     public function testCallbackAction()
     {
-        $service = $this->getMockBuilder('SclZfCartPaypoint\Service\PaypointService')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $service = $this->getMock('SclZfCartPaypoint\Service\PaypointService');
 
         $service->expects($this->once())
                 ->method('processCallback');
