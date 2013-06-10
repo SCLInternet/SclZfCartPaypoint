@@ -2,7 +2,7 @@
 
 namespace SclZfCartPaypoint\Service;
 
-use SclZfCartPaypoint\Data\Callback;
+use SclZfCartPaypoint\Callback\Callback;
 
 /**
  * Perform actions need to make payments through paypoint.
