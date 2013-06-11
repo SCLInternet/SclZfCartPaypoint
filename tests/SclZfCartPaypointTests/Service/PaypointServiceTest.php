@@ -134,6 +134,7 @@ class PaypointServiceTest extends \PHPUnit_Framework_TestCase
      *
      * @covers SclZfCartPaypoint\Service\PaypointService::processCallback
      * @covers SclZfCartPaypoint\Service\PaypointService::transactionSuccessful
+     * @covers SclZfCartPaypoint\Service\PaypointService::__construct
      *
      * @return void
      */
@@ -168,6 +169,7 @@ class PaypointServiceTest extends \PHPUnit_Framework_TestCase
      *
      * @covers SclZfCartPaypoint\Service\PaypointService::processCallback
      * @covers SclZfCartPaypoint\Service\PaypointService::transactionSuccessful
+     * @covers SclZfCartPaypoint\Service\PaypointService::__construct
      *
      * @return void
      */
