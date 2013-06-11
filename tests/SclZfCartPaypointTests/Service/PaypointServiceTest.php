@@ -2,6 +2,11 @@
 
 namespace SclZfCartPaypointTests\Service;
 
+use SclZfCartPayment\Entity\PaymentInterface;
+use SclZfCartPayment\Mapper\PaymentMapperInterface;
+use SclZfCartPayment\Service\CompletionService;
+use SclZfCartPaypoint\Callback\Callback;
+use SclZfCartPaypoint\Callback\StatusCode;
 use SclZfCartPaypoint\Service\PaypointService;
 
 /**
@@ -13,24 +18,45 @@ class PaypointServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * The instance to be tested.
-     *
+
      * @var PaypointService
      */
     protected $service;
 
     /**
-     * Mock HashChecker
+     * paymentMapper
      *
-     * @var \SclZfCartPaypoint\Service\HashChecker
+     * @var PaymentMapperInterface
      */
-    protected $hashChecker;
+    protected $paymentMapper;
 
     /**
-     * Mock request object.
+     * completionService
      *
-     * @var \Zend\Http\Request
+     * @var CompletionService
      */
-    protected $request;
+    protected $completionService;
+
+    /**
+     * callback
+     *
+     * @var Callback
+     */
+    protected $callback;
+
+    /**
+     * statusCode
+     *
+     * @var StatusCode
+     */
+    protected $statusCode;
+
+    /**
+     * payment
+     *
+     * @var PaymentInterface
+     */
+    protected $payment;
 
     /**
      * Create the object to use for testing.
@@ -39,40 +65,135 @@ class PaypointServiceTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->hashChecker = $this->getMockBuilder('SclZfCartPaypoint\Service\HashChecker')
+        $this->paymentMapper = $this->getMock('SclZfCartPayment\Mapper\PaymentMapperInterface');
+
+        $this->completionService = $this->getMockBuilder('SclZfCartPayment\Service\CompletionService')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->service = new PaypointService($this->hashChecker);
+        $this->service = new PaypointService($this->paymentMapper, $this->completionService);
 
-        $this->request = $this->getMock('Zend\Http\Request');
+        $this->callback = $this->getMock('SclZfCartPaypoint\Callback\Callback');
+
+        $this->statusCode = $this->getMock('SclZfCartPaypoint\Callback\StatusCode');
+
+        $this->callback
+             ->expects($this->any())
+             ->method('getCode')
+             ->will($this->returnValue($this->statusCode));
+
+        $this->payment = $this->getMock('SclZfCartPayment\Entity\PaymentInterface');
     }
 
     /**
-     * Test that if a callback is made with a bad URI BAD_CALLBACK is returned.
+     * Check that processCallback throws an exception if a bad transactionId is provided.
      *
      * @covers SclZfCartPaypoint\Service\PaypointService::processCallback
+     * @covers SclZfCartPaypoint\Service\PaypointService::paymentId
+     * @expectedException SclZfCartPaypoint\Exception\DomainException
      *
      * @return void
      */
-    public function testProcessCallbackWithBadUri()
+    public function testProcessCallbackWithBadTransactionId()
     {
-<<<<<<< HEAD
-        $callback = $this->getMock('SclZfCartPaypoint\Callback\Callback');
-
-        $this->service->processCallback($callback);
-=======
-        $this->hashChecker
+        $this->callback
              ->expects($this->atLeastOnce())
-             ->method('isValid')
-             ->will($this->returnValue(false));
+             ->method('getTransactionId')
+             ->will($this->returnValue('123'));
 
-        $result = $this->service->processCallback($this->request);
+        $this->service->processCallback($this->callback);
+    }
 
-        $this->assertEquals(
-            PaypointService::BAD_CALLBACK,
-            $result
-        );
->>>>>>> Started processing callbacks [broken]
+    /**
+     * Check that processCallback throws an exception if the payment is not found.
+     *
+     * @covers SclZfCartPaypoint\Service\PaypointService::processCallback
+     * @covers SclZfCartPaypoint\Service\PaypointService::paymentId
+     * @expectedException SclZfCartPaypoint\Exception\RuntimeException
+     *
+     * @return void
+     */
+    public function testProcessCallbackWithNonExistingPayment()
+    {
+        $this->callback
+             ->expects($this->atLeastOnce())
+             ->method('getTransactionId')
+             ->will($this->returnValue('TX-000002'));
+
+        $this->paymentMapper
+             ->expects($this->once())
+             ->method('findById')
+             ->with($this->equalTo(2))
+             ->will($this->returnValue(null));
+
+        $this->service->processCallback($this->callback);
+    }
+
+    /**
+     * Test that a successfult transaction is completed properly.
+     *
+     * @covers SclZfCartPaypoint\Service\PaypointService::processCallback
+     * @covers SclZfCartPaypoint\Service\PaypointService::transactionSuccessful
+     *
+     * @return void
+     */
+    public function testProcessCallbackWithSuccessfulTransaction()
+    {
+        $this->callback
+             ->expects($this->atLeastOnce())
+             ->method('getTransactionId')
+             ->will($this->returnValue('TX-000002'));
+
+        $this->paymentMapper
+             ->expects($this->once())
+             ->method('findById')
+             ->with($this->equalTo(2))
+             ->will($this->returnValue($this->payment));
+
+        $this->statusCode
+             ->expects($this->atLeastOnce())
+             ->method('value')
+             ->will($this->returnValue(StatusCode::AUTHORISED));
+
+        $this->completionService
+             ->expects($this->once())
+             ->method('complete')
+             ->with($this->equalTo($this->payment));
+
+        $this->service->processCallback($this->callback);
+    }
+
+    /**
+     * Test that a successfult transaction is completed properly.
+     *
+     * @covers SclZfCartPaypoint\Service\PaypointService::processCallback
+     * @covers SclZfCartPaypoint\Service\PaypointService::transactionSuccessful
+     *
+     * @return void
+     */
+    public function testProcessCallbackWithFailedTransaction()
+    {
+        $this->callback
+             ->expects($this->atLeastOnce())
+             ->method('getTransactionId')
+             ->will($this->returnValue('TX-000002'));
+
+        $this->paymentMapper
+             ->expects($this->once())
+             ->method('findById')
+             ->with($this->equalTo(2))
+             ->will($this->returnValue($this->payment));
+
+        $this->statusCode
+             ->expects($this->atLeastOnce())
+             ->method('value')
+             ->will($this->returnValue(StatusCode::NOT_AUTHORISED));
+
+        $this->completionService
+             ->expects($this->once())
+             ->method('fail')
+             ->with($this->equalTo($this->payment));
+
+        $this->service->processCallback($this->callback);
     }
 }

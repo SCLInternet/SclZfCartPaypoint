@@ -2,8 +2,12 @@
 
 namespace SclZfCartPaypoint\Service;
 
+use SclZfCartPayment\Mapper\PaymentMapperInterface;
+use SclZfCartPayment\Service\CompletionService;
 use SclZfCartPaypoint\Callback\Callback;
-use Zend\Http\Request;
+use SclZfCartPaypoint\Callback\StatusCode;
+use SclZfCartPaypoint\Exception\DomainException;
+use SclZfCartPaypoint\Exception\RuntimeException;
 
 /**
  * Perform actions need to make payments through paypoint.
@@ -12,43 +16,94 @@ use Zend\Http\Request;
  */
 class PaypointService
 {
-    const TRANSACTION_SUCCESS = 0;
-    const TRANSACTION_FAILED  = 1;
-    const BAD_CALLBACK        = 2;
+    /**
+     * The payment mapper.
+     *
+     * @var PaymentMapperInterface
+     */
+    protected $paymentMapper;
 
     /**
-     * Used to verify a callback URL.
+     * The payment completion service.
      *
-     * @var HashChecker
+     * @var CompletionService
      */
-    protected $hashChecker;
+    protected $completionService;
 
     /**
-     * __construct
+     * Constructor.
      *
-     * @param HashChecker $hashChecker
+     * @param  PaymentMapperInterface $paymentMapper
+     * @param  CompletionService      $completionService
      */
-    public function __construct(HashChecker $hashChecker)
-    {
-        $this->hashChecker = $hashChecker;
+    public function __construct(
+        PaymentMapperInterface $paymentMapper,
+        CompletionService $completionService
+    ) {
+        $this->paymentMapper     = $paymentMapper;
+        $this->completionService = $completionService;
     }
 
     /**
-     * Takes the request object from a Paypoint transaction callback and completes
-     * or fails the transaction.
+     * Returns the payment ID for the transaction.
      *
-     * @param  Request $request The request object from the callback page.
-     * @return void
+     * @param  string $transactionId
+     * @return int
+     * @throws DomainException When transaction ID is the incorrect format.
+     * @todo   Better ID for fetching the payment.
      */
-    public function processCallback(Request $request)
+    protected function paymentId($transactionId)
     {
-        if (!$this->hashChecker->isValid($request->getUri())) {
-            return self::BAD_CALLBACK;
+        $matches = array();
+
+        if (!preg_match('/TX-([0-9]*)/', $transactionId, $matches)) {
+            throw new DomainException(
+                'Invalid transaction ID format "' . $transactionId . '"'
+            );
         }
 
-        // Create callback
+        return (int) $matches[1];
+    }
 
-        // Load tansaction
+    /**
+     * Check if the transaction was successful.
+     *
+     * @param  Callback $callback
+     * @return bool
+     * @todo   Complete checks
+     */
+    protected function transactionSuccessful(Callback $callback)
+    {
+        return $callback->getCode()->value() === StatusCode::AUTHORISED;
+    }
 
+    /**
+     * Takes the callback data and updates the payment details as necessary.
+     *
+     * @param  Callback $callback
+     * @return bool
+     * @throws RuntimeException When payment is not found in the database.
+     */
+    public function processCallback(Callback $callback)
+    {
+        $paymentId = $this->paymentId($callback->getTransactionId());
+
+        $payment = $this->paymentMapper->findById($paymentId);
+
+        if (null === $payment) {
+            throw new RuntimeException(
+                'Couldn\'t load payment with id "' . $paymentId . '"'
+            );
+        }
+
+        // @todo Verify the payment is not in a completed state already.
+
+        if ($this->transactionSuccessful($callback)) {
+            $this->completionService->complete($payment);
+            return true;
+        }
+
+        $this->completionService->fail($payment);
+        return false;
     }
 }

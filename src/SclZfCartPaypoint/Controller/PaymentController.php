@@ -45,6 +45,7 @@ class PaymentController extends AbstractActionController
      * Process the payment callback.
      *
      * @return Zend\Http\Response
+     * @todo Handle invalid data in a better way than throwing exceptions.
      */
     public function callbackAction()
     {
@@ -54,8 +55,20 @@ class PaymentController extends AbstractActionController
             throw new DomainException('URI doesn\'t contain a valid hash.');
         }
 
-        $this->paypointService->processCallback($request);
+        $callback = $this->getServiceLocator()->get('SclZfCartPaypoint\Callback\Callback');
 
+        try {
+            $callback->set($request->getQuery());
+        } catch (DomainException $e) {
+            // @todo Log message
+            throw DomainException('Invalid callback values.');
+        }
+
+        if ($this->paypointService->processCallback($callback)) {
+            // @todo Redirect to success
+        }
+
+        // @todo Redirect to failure
         return $this->getResponse();
     }
 }

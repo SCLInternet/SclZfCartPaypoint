@@ -73,6 +73,12 @@ class Module implements
     public function getServiceConfig()
     {
         return array(
+            'shared' => array(
+                'SclZfCartPaypoint\Callback\Callback' => false,
+            ),
+            'invokables' => array(
+                'SclZfCartPaypoint\Callback\Callback' => 'SclZfCartPaypoint\Callback\Callback',
+            ),
             'factories' => array(
                 'SclZfCartPaypoint\Options\PaypointOptions' => function ($sm) {
                     return new \SclZfCartPaypoint\Options\PaypointOptions(
