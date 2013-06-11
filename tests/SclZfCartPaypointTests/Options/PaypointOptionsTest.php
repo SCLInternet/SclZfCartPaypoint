@@ -46,14 +46,12 @@ class PaypointOptionsTest extends \PHPUnit_Framework_TestCase
     /**
      * Test the getters and setters
      *
-     * @covers SclZfCartPaypoint\Options\PaypointOptions::getLive
-     * @covers SclZfCartPaypoint\Options\PaypointOptions::setLive
+     * @covers SclZfCartPaypoint\Options\PaypointOptions::getMode
+     * @covers SclZfCartPaypoint\Options\PaypointOptions::setMode
      * @covers SclZfCartPaypoint\Options\PaypointOptions::getName
      * @covers SclZfCartPaypoint\Options\PaypointOptions::setName
      * @covers SclZfCartPaypoint\Options\PaypointOptions::getMerchant
      * @covers SclZfCartPaypoint\Options\PaypointOptions::setMerchant
-     * @covers SclZfCartPaypoint\Options\PaypointOptions::getVersion
-     * @covers SclZfCartPaypoint\Options\PaypointOptions::setVersion
      * @covers SclZfCartPaypoint\Options\PaypointOptions::getCurrency
      * @covers SclZfCartPaypoint\Options\PaypointOptions::setCurrency
      * @covers SclZfCartPaypoint\Options\PaypointOptions::getTxDescription
@@ -67,10 +65,11 @@ class PaypointOptionsTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSet()
     {
-        $this->getSetCheck('live', true);
+        $this->getSetCheck('mode', 'true');
+        $this->getSetCheck('mode', 'false');
+        $this->getSetCheck('mode', 'live');
         $this->getSetCheck('name', 'the_name');
         $this->getSetCheck('merchant', 'the_merchant');
-        $this->getSetCheck('version', '10.0');
         $this->getSetCheck('currency', 'GBP');
         $this->getSetCheck('txDescription', 'the_description');
         $this->getSetCheck('liveConnection', $this->getMock('SclZfCartPaypoint\Options\ConnectionOptions'));
@@ -156,14 +155,21 @@ class PaypointOptionsTest extends \PHPUnit_Framework_TestCase
         $this->options->setLiveConnection($liveConnection);
         $this->options->setTestConnection($testConnection);
 
-        $this->options->setLive(false);
+        $this->options->setMode('true');
         $this->assertEquals(
             $testConnection,
             $this->options->getConnectionOptions(),
-            'Test options are wrong'
+            'Test true options are wrong'
         );
 
-        $this->options->setLive(true);
+        $this->options->setMode('false');
+        $this->assertEquals(
+            $testConnection,
+            $this->options->getConnectionOptions(),
+            'Test false options are wrong'
+        );
+
+        $this->options->setMode('live');
         $this->assertEquals(
             $liveConnection,
             $this->options->getConnectionOptions(),

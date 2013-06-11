@@ -73,9 +73,38 @@ class Module implements
     public function getServiceConfig()
     {
         return array(
+            'shared' => array(
+                'SclZfCartPaypoint\Callback\Callback' => false,
+            ),
+            'invokables' => array(
+                'SclZfCartPaypoint\Callback\Callback' => 'SclZfCartPaypoint\Callback\Callback',
+            ),
             'factories' => array(
+                'SclZfCartPaypoint\Options\PaypointOptions' => function ($sm) {
+                    return new \SclZfCartPaypoint\Options\PaypointOptions(
+                        $config['scl_zf_cart_paypoint']
+                    );
+                },
+
+                'SclZfCartPaypoint\Paypoint' => function ($sm) {
+                    return new \SclZfCartPaypoint\Paypoint(
+                        $sm->get('SclZfCartPaypoint\Options\PaypointOptions'),
+                        $sm->get('SclZfUtilities\Route\UrlBuilder')
+                    );
+                },
+
+                'SclZfCartPaypoint\Service\HashChecker' => function ($sm) {
+                    $options = $sm->get('SclZfCartPaypoint\Options\PaypointOptions');
+
+                    return new \SclZfCartPaypoint\Service\HashChecker(
+                        $options->getConnectionOptions()->getPassword()
+                    );
+                },
+
                 'SclZfCartPaypoint\Service\PaypointService' => function ($sm) {
-                    return new \SclZfCartPaypoint\Service\PaypointService();
+                    return new \SclZfCartPaypoint\Service\PaypointService(
+                        $sm->get('SclZfCartPaypoint\Service\HashChecker')
+                    );
                 },
             ),
         );
