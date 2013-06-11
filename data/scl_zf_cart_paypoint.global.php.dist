@@ -1,0 +1,17 @@
+<?php
+
+return array(
+    'live'            => true,
+    'name'            => 'Paypoint Hosted Page Payment Gateway',
+    'merchant'        => '',
+    'currency'        => 'GBP',
+    'tx_description'  => 'Payment via Paypoint',
+    'live_connection' => array(
+        'url'      => 'https://www.secpay.com/java-bin/ValCard',
+        'password' => '',
+    ),
+    'test_connection' => array(
+        'url'      => 'https://www.secpay.com/java-bin/ValCard',
+        'password' => '',
+    ),
+);

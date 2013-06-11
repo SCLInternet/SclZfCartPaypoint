@@ -12,12 +12,16 @@ use Zend\Stdlib\AbstractOptions;
  */
 class PaypointOptions extends AbstractOptions
 {
+    const MODE_TEST_TRUE  = 'true';
+    const MODE_TEST_FALSE = 'false';
+    const MODE_LIVE       = 'live';
+
     /**
      * Should the system be running live transactions.
      *
-     * @var bool
+     * @var string
      */
-    protected $live;
+    protected $mode;
 
     /**
      * The name of this payment method.
@@ -32,13 +36,6 @@ class PaypointOptions extends AbstractOptions
      * @var string
      */
     protected $merchant;
-
-    /**
-     * The sagepay protocol version.
-     *
-     * @var string
-     */
-    protected $version;
 
     /**
      * The currency to make transactions in.
@@ -69,24 +66,31 @@ class PaypointOptions extends AbstractOptions
     protected $testConnection;
 
     /**
-     * Gets the value of live
+     * Gets the value of mode
      *
      * @return bool
      */
-    public function getLive()
+    public function getMode()
     {
-        return $this->live;
+        return $this->mode;
     }
 
     /**
-     * Sets the value of live
+     * Sets the value of mode
      *
-     * @param  string $live
+     * @param  string $mode Any of the MODE_* values.
      * @return self
      */
-    public function setLive($live)
+    public function setMode($mode)
     {
-        $this->live = (string) $live;
+        if (!in_array(
+            $mode,
+            array(self::MODE_TEST_TRUE, self::MODE_TEST_FALSE, self::MODE_LIVE)
+        )) {
+            throw new DomainException('Value of $mode was invalid; got "' . $mode .'"');
+        }
+
+        $this->mode = (string) $mode;
         return $this;
     }
 
@@ -131,28 +135,6 @@ class PaypointOptions extends AbstractOptions
     public function setMerchant($merchant)
     {
         $this->merchant = (string) $merchant;
-        return $this;
-    }
-
-    /**
-     * Gets the value of version
-     *
-     * @return string
-     */
-    public function getVersion()
-    {
-        return $this->version;
-    }
-
-    /**
-     * Sets the value of version
-     *
-     * @param  string $version
-     * @return self
-     */
-    public function setVersion($version)
-    {
-        $this->version = (string) $version;
         return $this;
     }
 
@@ -273,7 +255,7 @@ class PaypointOptions extends AbstractOptions
      */
     public function getConnectionOptions()
     {
-        return $this->getLive()
+        return (self::MODE_LIVE === $this->getMode())
             ? $this->getLiveConnection()
             : $this->getTestConnection();
     }
