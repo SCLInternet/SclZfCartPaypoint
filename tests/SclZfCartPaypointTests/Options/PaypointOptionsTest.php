@@ -3,7 +3,7 @@
 namespace SclZfCartPaypointTests\Options;
 
 use SclZfCartPaypoint\Options\PaypointOptions;
-use SclZfCartPaypoint\Options\ConnectionOptions;
+use SclZfCartPaypoint\Options\PaypointOptionsInterface;
 
 /**
  * Unit tests for {@see ConnectionOptions}.
@@ -29,6 +29,13 @@ class PaypointOptionsTest extends \PHPUnit_Framework_TestCase
         $this->options = new PaypointOptions;
     }
 
+    /**
+     * Test a getter and setter for a specific parameter.
+     *
+     * @param  string $property
+     * @param  mixed  $value
+     * @return void
+     */
     protected function getSetCheck($property, $value)
     {
         $getter = "get$property";
@@ -56,10 +63,12 @@ class PaypointOptionsTest extends \PHPUnit_Framework_TestCase
      * @covers SclZfCartPaypoint\Options\PaypointOptions::setCurrency
      * @covers SclZfCartPaypoint\Options\PaypointOptions::getTxDescription
      * @covers SclZfCartPaypoint\Options\PaypointOptions::setTxDescription
-     * @covers SclZfCartPaypoint\Options\PaypointOptions::getLiveConnection
-     * @covers SclZfCartPaypoint\Options\PaypointOptions::setLiveConnection
-     * @covers SclZfCartPaypoint\Options\PaypointOptions::getTestConnection
-     * @covers SclZfCartPaypoint\Options\PaypointOptions::setTestConnection
+     * @covers SclZfCartPaypoint\Options\PaypointOptions::getUrl
+     * @covers SclZfCartPaypoint\Options\PaypointOptions::setUrl
+     * @covers SclZfCartPaypoint\Options\PaypointOptions::getLivePassword
+     * @covers SclZfCartPaypoint\Options\PaypointOptions::setLivePassword
+     * @covers SclZfCartPaypoint\Options\PaypointOptions::getTestPassword
+     * @covers SclZfCartPaypoint\Options\PaypointOptions::setTestPassword
      *
      * @return void
      */
@@ -72,108 +81,77 @@ class PaypointOptionsTest extends \PHPUnit_Framework_TestCase
         $this->getSetCheck('merchant', 'the_merchant');
         $this->getSetCheck('currency', 'GBP');
         $this->getSetCheck('txDescription', 'the_description');
-        $this->getSetCheck('liveConnection', $this->getMock('SclZfCartPaypoint\Options\ConnectionOptions'));
-        $this->getSetCheck('testConnection', $this->getMock('SclZfCartPaypoint\Options\ConnectionOptions'));
+        $this->getSetCheck('url', 'http://api.url');
+        $this->getSetCheck('livePassword', 'live_password');
+        $this->getSetCheck('testPassword', 'test_password');
     }
 
     /**
-     * Test the set*Connection method when passed an array.
+     * Test set mode with a value which is not in the allowed set.
      *
-     * @covers SclZfCartPaypoint\Options\PaypointOptions::getLiveConnection
-     * @covers SclZfCartPaypoint\Options\PaypointOptions::setLiveConnection
-     * @covers SclZfCartPaypoint\Options\PaypointOptions::getTestConnection
-     * @covers SclZfCartPaypoint\Options\PaypointOptions::setTestConnection
+     * @covers SclZfCartPaypoint\Options\PaypointOptions::setMode
+     * @expectedException SclZfCartPaypoint\Exception\DomainException
      *
      * @return void
      */
-    public function testConnectionSettersWithArray()
+    public function testSetModeWithBadMode()
     {
-        $live = array(
-            'url'      => 'live_url',
-            'password' => 'live_pw',
-        );
-        $test = array(
-            'url'      => 'test_url',
-            'password' => 'test_pw',
-        );
-
-        $this->options->setLiveConnection($live);
-        $this->options->setTestConnection($test);
-
-        $liveConn = $this->options->getLiveConnection();
-        $testConn = $this->options->getTestConnection();
-
-        $this->assertEquals($live['url'], $liveConn->getUrl(), 'Live URL is incorrect.');
-        $this->assertEquals($test['url'], $testConn->getUrl(), 'Test URL is incorrect.');
-
-        $this->assertEquals($live['password'], $liveConn->getPassword(), 'Live password is incorrect.');
-        $this->assertEquals($test['password'], $testConn->getPassword(), 'Test password is incorrect.');
-    }
-
-    /**
-     * Check that when setLiveConnection is call with something that is not an
-     * array or instance of ConnectionOptions that an exception is thrown.
-     *
-     * @covers SclZfCartPaypoint\Options\PaypointOptions::setLiveConnection
-     * @expectedException SclZfCartPaypoint\Exception\InvalidArgumentException
-     *
-     * @return void
-     */
-    public function testSetLiveConnectionWithBadValue()
-    {
-        $this->options->setLiveConnection(7);
-    }
-
-    /**
-     * Check that when setTestConnection is call with something that is not an
-     * array or instance of ConnectionOptions that an exception is thrown.
-     *
-     * @covers SclZfCartPaypoint\Options\PaypointOptions::setTestConnection
-     * @expectedException SclZfCartPaypoint\Exception\InvalidArgumentException
-     *
-     * @return void
-     */
-    public function testSetTestConnectionWithBadValue()
-    {
-        $this->options->setTestConnection(7);
+        $this->options->setMode('bad_mode');
     }
 
     /**
      * testGetConnection
      *
-     * @covers SclZfCartPaypoint\Options\PaypointOptions::getConnectionOptions
+     * @covers SclZfCartPaypoint\Options\PaypointOptions::isLive
+     * @covers SclZfCartPaypoint\Options\PaypointOptions::getActivePassword
      *
      * @return void
      */
-    public function testGetConnection()
+    public function testIsLiveAndGetActivePassword()
     {
-        $liveConnection = new ConnectionOptions();
-        $liveConnection->setUrl('liveurl');
-        $testConnection = new ConnectionOptions();
-        $liveConnection->setUrl('testurl');
+        $livePassword = 'live_password';
+        $testPassword = 'test_password';
 
-        $this->options->setLiveConnection($liveConnection);
-        $this->options->setTestConnection($testConnection);
+        $this->options->setLivePassword($livePassword);
+        $this->options->setTestPassword($testPassword);
 
-        $this->options->setMode('true');
-        $this->assertEquals(
-            $testConnection,
-            $this->options->getConnectionOptions(),
-            'Test true options are wrong'
+        $this->options->setMode(PaypointOptionsInterface::MODE_LIVE);
+
+        $this->assertTrue(
+            $this->options->isLive(),
+            'isLive should return true for MODE_LIVE'
         );
 
-        $this->options->setMode('false');
         $this->assertEquals(
-            $testConnection,
-            $this->options->getConnectionOptions(),
-            'Test false options are wrong'
+            $livePassword,
+            $this->options->getActivePassword(),
+            'Live password doesn\'t match for MODE_LIVE'
         );
 
-        $this->options->setMode('live');
+        $this->options->setMode(PaypointOptionsInterface::MODE_TEST_TRUE);
+
+        $this->assertFalse(
+            $this->options->isLive(),
+            'isLive should return false for MODE_TEST_TRUE'
+        );
+
         $this->assertEquals(
-            $liveConnection,
-            $this->options->getConnectionOptions(),
-            'Live options are wrong'
+            $testPassword,
+            $this->options->getActivePassword(),
+            'Test password doesn\'t match for MODE_TEST_TRUE'
+        );
+
+        $this->options->setMode(PaypointOptionsInterface::MODE_TEST_FALSE);
+
+        $this->assertFalse(
+            $this->options->isLive(),
+            'isLive should return false for MODE_TEST_FALSE'
+        );
+
+        $this->assertEquals(
+            $testPassword,
+            $this->options->getActivePassword(),
+            'Test password doesn\'t match for MODE_TEST_FALSE'
         );
     }
 }
