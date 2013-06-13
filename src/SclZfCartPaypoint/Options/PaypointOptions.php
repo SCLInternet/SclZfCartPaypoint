@@ -2,7 +2,7 @@
 
 namespace SclZfCartPaypoint\Options;
 
-use SclZfCartPaypoint\Exception\InvalidArgumentException;
+use SclZfCartPaypoint\Exception\DomainException;
 use Zend\Stdlib\AbstractOptions;
 
 /**
@@ -10,12 +10,8 @@ use Zend\Stdlib\AbstractOptions;
  *
  * @author Tom Oram <tom@scl.co.uk>
  */
-class PaypointOptions extends AbstractOptions
+class PaypointOptions extends AbstractOptions implements PaypointOptionsInterface
 {
-    const MODE_TEST_TRUE  = 'true';
-    const MODE_TEST_FALSE = 'false';
-    const MODE_LIVE       = 'live';
-
     /**
      * Should the system be running live transactions.
      *
@@ -52,21 +48,28 @@ class PaypointOptions extends AbstractOptions
     protected $txDescription;
 
     /**
-     * liveConnection
+     * The URL of the Paypoint API.
      *
-     * @var mixed
+     * @var string
      */
-    protected $liveConnection;
+    protected $url;
 
     /**
-     * testConnection
+     * The password for the system in live mode.
      *
-     * @var mixed
+     * @var string
      */
-    protected $testConnection;
+    protected $livePassword;
 
     /**
-     * Gets the value of mode
+     * The password for the system in test mode.
+     *
+     * @var string
+     */
+    protected $testPassword;
+
+    /**
+     * {@inheritDoc}
      *
      * @return bool
      */
@@ -76,10 +79,11 @@ class PaypointOptions extends AbstractOptions
     }
 
     /**
-     * Sets the value of mode
+     * {@inheritDoc}
      *
      * @param  string $mode Any of the MODE_* values.
      * @return self
+     * @throws DomainException If the mode is not one of the 3 allowed mode strings.
      */
     public function setMode($mode)
     {
@@ -95,7 +99,7 @@ class PaypointOptions extends AbstractOptions
     }
 
     /**
-     * Gets the value of name
+     * {@inheritDoc}
      *
      * @return string
      */
@@ -105,7 +109,7 @@ class PaypointOptions extends AbstractOptions
     }
 
     /**
-     * Sets the value of name
+     * {@inheritDoc}
      *
      * @param  string $name
      * @return self
@@ -117,7 +121,7 @@ class PaypointOptions extends AbstractOptions
     }
 
     /**
-     * Gets the value of merchant
+     * {@inheritDoc}
      *
      * @return string
      */
@@ -127,7 +131,7 @@ class PaypointOptions extends AbstractOptions
     }
 
     /**
-     * Sets the value of merchant
+     * {@inheritDoc}
      *
      * @param  string $merchant
      * @return self
@@ -139,7 +143,7 @@ class PaypointOptions extends AbstractOptions
     }
 
     /**
-     * Gets the value of currency
+     * {@inheritDoc}
      *
      * @return string
      */
@@ -149,7 +153,7 @@ class PaypointOptions extends AbstractOptions
     }
 
     /**
-     * Sets the value of currency
+     * {@inheritDoc}
      *
      * @param  string $Currency
      * @return self
@@ -161,7 +165,7 @@ class PaypointOptions extends AbstractOptions
     }
 
     /**
-     * Gets the value of txDescription
+     * {@inheritDoc}
      *
      * @return string
      */
@@ -171,7 +175,7 @@ class PaypointOptions extends AbstractOptions
     }
 
     /**
-     * Sets the value of txDescription
+     * {@inheritDoc}
      *
      * @param  string $txDescription
      * @return self
@@ -183,80 +187,92 @@ class PaypointOptions extends AbstractOptions
     }
 
     /**
-     * Gets the value of liveConnection
+     * {@inheritDoc}
      *
-     * @return ConnectionOptions
+     * @return string
      */
-    public function getLiveConnection()
+    public function getUrl()
     {
-        return $this->liveConnection;
+        return $this->url;
     }
 
     /**
-     * Sets the value of liveConnection
+     * {@inheritDoc}
      *
-     * @param  ConnectionOptions|array $liveConnection
+     * @param  string $url
      * @return self
      */
-    public function setLiveConnection($liveConnection)
+    public function setUrl($url)
     {
-        if (is_array($liveConnection)) {
-            $liveConnection = new ConnectionOptions($liveConnection);
-        }
+        $this->url = (string) $url;
+        return $this;
+    }
 
-        if (!$liveConnection instanceof ConnectionOptions) {
-            throw new InvalidArgumentException(
-                '$liveConnection must be an instance of ConnectionOptions'
-            );
-        }
+    /**
+     * {@inheritDoc}
+     *
+     * @return string
+     */
+    public function getLivePassword()
+    {
+        return $this->livePassword;
+    }
 
-        $this->liveConnection = $liveConnection;
+    /**
+     * {@inheritDoc}
+     *
+     * @param  string $livePassword
+     * @return self
+     */
+    public function setLivePassword($password)
+    {
+        $this->livePassword = $password;
 
         return $this;
     }
 
     /**
-     * Gets the value of testConnection
+     * {@inheritDoc}
      *
-     * @return ConnectionOptions
+     * @return string
      */
-    public function getTestConnection()
+    public function getTestPassword()
     {
-        return $this->testConnection;
+        return $this->testPassword;
     }
 
     /**
-     * Sets the value of testConnection
+     * {@inheritDoc}
      *
-     * @param  ConnectionOptions|array $testConnection
+     * @param  string $testPassword
      * @return self
      */
-    public function setTestConnection($testConnection)
+    public function setTestPassword($password)
     {
-        if (is_array($testConnection)) {
-            $testConnection = new ConnectionOptions($testConnection);
-        }
-
-        if (!$testConnection instanceof ConnectionOptions) {
-            throw new InvalidArgumentException(
-                '$testConnection must be an instance of ConnectionOptions'
-            );
-        }
-
-        $this->testConnection = $testConnection;
+        $this->testPassword = $password;
 
         return $this;
     }
 
     /**
-     * Returns the active connection options.
+     * {@inheritDoc}
      *
-     * @return ConnectionOptions
+     * @return bool
      */
-    public function getConnectionOptions()
+    public function isLive()
     {
-        return (self::MODE_LIVE === $this->getMode())
-            ? $this->getLiveConnection()
-            : $this->getTestConnection();
+        return (self::MODE_LIVE === $this->getMode());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return string
+     */
+    public function getActivePassword()
+    {
+        return ($this->isLive())
+            ? $this->getLivePassword()
+            : $this->getTestPassword();
     }
 }
