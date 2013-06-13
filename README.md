@@ -10,7 +10,7 @@ Installation
 
 This module requires that you are using both the
 [SclZfCart](https://github.com/SCLInternet/SclZfCart) and
-[SclZfCartPayment](https://github.com/SCLInternet/SclZfCart) modules.
+[SclZfCartPayment](https://github.com/SCLInternet/SclZfCartPayment) modules.
 
 You can easily install this module via composer by adding the following to your
 `composer.json` and running `php composer.phar install`.
@@ -30,8 +30,8 @@ Once the modules are installed add `SclZfCart`, `SclZfCartPayment` and
 
 You will need to refer to both the 
 [SclZfCart](https://github.com/SCLInternet/SclZfCart) and
-[SclZfCartPayment](https://github.com/SCLInternet/SclZfCart) modules for their
-specific instructions setup. Once they are configured copy the
+[SclZfCartPayment](https://github.com/SCLInternet/SclZfCartPayment) modules for
+their specific instructions setup. Once they are configured copy the
 `data/scl_zf_cart_paypoint.global.php.dist` file to the your application's
 config autoload directory and edit it with your Paypoint account settings.
 
