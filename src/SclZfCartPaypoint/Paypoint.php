@@ -5,7 +5,7 @@ namespace SclZfCartPaypoint;
 use SclZfCart\Entity\OrderInterface;
 use SclZfCartPayment\Entity\PaymentInterface;
 use SclZfCartPayment\PaymentMethodInterface;
-use SclZfCartPaypoint\Options\PaypointOptions;
+use SclZfCartPaypoint\Options\PaypointOptionsInterface;
 use SclZfUtilities\Route\UrlBuilder;
 use Zend\Form\Form;
 
@@ -16,14 +16,15 @@ use Zend\Form\Form;
  */
 class Paypoint implements PaymentMethodInterface
 {
-    const VAR_MERCHANT = 'merchant';
-    const VAR_TRANS_ID = 'trans_id';
-    const VAR_AMOUNT   = 'amount';
-    const VAR_CALLBACK = 'callback';
-    const VAR_DIGEST   = 'digest';
+    const VAR_MERCHANT    = 'merchant';
+    const VAR_TRANS_ID    = 'trans_id';
+    const VAR_AMOUNT      = 'amount';
+    const VAR_CALLBACK    = 'callback';
+    const VAR_DIGEST      = 'digest';
+    const VAR_TEST_STATUS = 'test_status';
 
     /**
-     * @var PaypointOptions
+     * @var PaypointOptionsInterface
      */
     protected $options;
 
@@ -35,11 +36,11 @@ class Paypoint implements PaymentMethodInterface
     protected $urlBuilder;
 
     /**
-     * @param PaypointOptions $options
-     * @param UrlBuilder      $urlBuilder
+     * @param PaypointOptionsInterface $options
+     * @param UrlBuilder               $urlBuilder
      */
     public function __construct(
-        PaypointOptions $options,
+        PaypointOptionsInterface $options,
         UrlBuilder $urlBuilder
     ) {
         $this->options    = $options;
@@ -89,7 +90,7 @@ class Paypoint implements PaymentMethodInterface
     {
         $form->setAttribute(
             'action',
-            $this->options->getConnectionOptions()->getUrl()
+            $this->options->getUrl()
         );
 
         // @todo Use the SequenceGenerator
@@ -99,7 +100,7 @@ class Paypoint implements PaymentMethodInterface
         $digest = md5(
             $transId
             . $total
-            . $this->options->getConnectionOptions()->getPassword()
+            . $this->options->getActivePassword()
         );
 
         $callbackUrl = $this->urlBuilder->getUrl('paypoint/callback');
@@ -109,6 +110,7 @@ class Paypoint implements PaymentMethodInterface
         $this->addHiddenField($form, self::VAR_AMOUNT, $total);
         $this->addHiddenField($form, self::VAR_CALLBACK, $callbackUrl);
         $this->addHiddenField($form, self::VAR_DIGEST, $digest);
+        $this->addHiddenField($form, self::VAR_TEST_STATUS, $this->options->getMode());
     }
 
     /**

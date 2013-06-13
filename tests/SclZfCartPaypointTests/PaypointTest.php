@@ -16,22 +16,13 @@ class PaypointTest extends \PHPUnit_Framework_TestCase
 
     protected $options;
 
-    protected $connectionOptions;
-
     protected $urlBuilder;
 
     protected function setUp()
     {
         $this->options = $this->getMock('SclZfCartPaypoint\Options\PaypointOptions');
 
-        $this->connectionOptions = $this->getMock('SclZfCartPaypoint\Options\ConnectionOptions');
-
         $this->urlBuilder = $this->getMock('SclZfUtilities\Route\UrlBuilder');
-
-        $this->options
-             ->expects($this->any())
-             ->method('getConnectionOptions')
-             ->will($this->returnValue($this->connectionOptions));
 
         $this->paypoint = new Paypoint(
             $this->options,
@@ -76,12 +67,13 @@ class PaypointTest extends \PHPUnit_Framework_TestCase
         $transId        = 'TX-000005';
         $remotePassword = 'secret_stuff';
         $digest         = md5($transId . $amount . $remotePassword);
+        $mode           = 'live';
 
         $form  = new Form;
         $order = $this->getMock('SclZfCart\Entity\OrderInterface');
         $payment = $this->getMock('SclZfCartPayment\Entity\PaymentInterface');
 
-        $this->connectionOptions
+        $this->options
              ->expects($this->any())
              ->method('getUrl')
              ->will($this->returnValue($formAction));
@@ -90,6 +82,11 @@ class PaypointTest extends \PHPUnit_Framework_TestCase
              ->expects($this->any())
              ->method('getMerchant')
              ->will($this->returnValue($merchant));
+
+        $this->options
+             ->expects($this->any())
+             ->method('getMode')
+             ->will($this->returnValue($mode));
 
         $this->urlBuilder
              ->expects($this->any())
@@ -101,9 +98,9 @@ class PaypointTest extends \PHPUnit_Framework_TestCase
               ->method('getTotal')
               ->will($this->returnValue($amount));
 
-        $this->connectionOptions
+        $this->options
              ->expects($this->any())
-             ->method('getPassword')
+             ->method('getActivePassword')
              ->will($this->returnValue($remotePassword));
 
         $payment->expects($this->any())
@@ -115,11 +112,11 @@ class PaypointTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($formAction, $form->getAttribute('action'), 'Form action is incorrect');
 
         $this->assertEquals($merchant, $form->get('merchant')->getValue());
-        // @todo Test trans_id
-        //$this->assertEquals($merchant, $form->get('trans_id')->getValue());
+        $this->assertEquals($transId, $form->get('trans_id')->getValue());
         $this->assertEquals($amount, $form->get('amount')->getValue());
         $this->assertEquals($callback, $form->get('callback')->getValue());
         $this->assertEquals($digest, $form->get('digest')->getValue());
+        $this->assertEquals($mode, $form->get('test_status')->getValue());
     }
 
     /**
