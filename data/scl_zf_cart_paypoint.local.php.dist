@@ -1,0 +1,50 @@
+<?php
+
+return array(
+    'scl_zf_cart_paypoint' => array(
+        /**
+         * Sets whether the system is running in live or test mode.
+         *
+         * Possible values are:
+         * 'live'  - The system is running live and will process real transactions.
+         * 'true'  - The system is in test mode and will return success for test transactions.
+         * 'false' - The system is in test mode and will return failure for test transactions.
+         */
+        'mode'           => 'live',
+
+        /**
+         * The name that will appear when the user is asked to select their payment method.
+         */
+        'name'           => 'Paypoint Hosted Page Payment Gateway',
+
+        /**
+         * The username of the account.
+         */
+        'merchant'       => '',
+
+        /**
+         * The 3 letter currency code for the currency to process the transactions in.
+         */
+        'currency'       => 'GBP',
+
+        /**
+         * The descriptions to appear on the transaction.
+         */
+        'tx_description' => 'Payment via Paypoint',
+
+        /**
+         * The URL of Paypoint's API.
+         */
+        'url'            => 'https://www.secpay.com/java-bin/ValCard',
+
+        /**
+         * The password for the test account.
+         */
+        'test_password'  => '',
+
+        /**
+         * The password for the live account.
+         */
+        'live_password'  => '',
+    ),
+);
