@@ -81,6 +81,8 @@ class Module implements
             ),
             'factories' => array(
                 'SclZfCartPaypoint\Options\PaypointOptions' => function ($sm) {
+                    $config = $sm->get('Config');
+
                     return new \SclZfCartPaypoint\Options\PaypointOptions(
                         $config['scl_zf_cart_paypoint']
                     );
